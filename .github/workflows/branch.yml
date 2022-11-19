@@ -108,6 +108,8 @@ jobs:
           repository: arikkfir/arikkfir.github.io
           ref: master
           token: ${{ secrets.HELM_GITHUB_TOKEN }}
+      - run: pwd
+      - run: ls -la
       - run: helm package ./chart --app-version=${VERSION} --version=${VERSION} --destination=./arikkfir.github.io/charts/
       - name: push chart
         run: |
