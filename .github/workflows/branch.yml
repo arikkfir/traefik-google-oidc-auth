@@ -92,7 +92,7 @@ jobs:
 
   helm:
     name: Helm
-    needs: [version, docker]
+    needs: version
     runs-on: ubuntu-latest
     env:
       BRANCH: ${{ needs.version.outputs.branchSlug }}
