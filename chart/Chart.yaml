@@ -1,5 +1,4 @@
 apiVersion: v2
-kubeVersion: ">= 1.24.0"
 type: application
 name: traefik-google-oidc-auth
 version: "0.0.1"
