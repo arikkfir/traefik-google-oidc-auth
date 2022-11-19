@@ -1,0 +1,14 @@
+apiVersion: v2
+kubeVersion: ">= 1.25.0"
+type: application
+name: traefik-google-oidc-auth
+version: "0.0.1"
+appVersion: "local"
+description: Provides support for authenticating access to services using Google OAuth & OIDC.
+home: https://github.com/arikkfir/traefik-google-oidc-auth
+sources:
+  - https://github.com/arikkfir/traefik-google-oidc-auth
+maintainers:
+  - name: Arik Kfir
+    email: arik@kfirs.com
+    url: https://github.com/arikkfir

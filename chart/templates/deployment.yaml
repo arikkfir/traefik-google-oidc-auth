@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "{{.Release.Name}}"
+    app.kubernetes.io/component: server
+  name: "{{.Release.Name}}-server"
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: "{{.Release.Name}}"
+      app.kubernetes.io/component: server
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: "{{.Release.Name}}"
+        app.kubernetes.io/component: server
+    spec:
+      containers:
+        - image: "ghcr.io/arikkfir/traefik-google-oidc-auth:{{.Chart.AppVersion | replace "+" "_"}}"
+          name: server
+          ports:
+            - containerPort: 8000
+              name: http
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+      serviceAccountName: "{{.Release.Name}}-server"

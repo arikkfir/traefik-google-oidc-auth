@@ -21,3 +21,9 @@ $ cd traefik-google-oidc-auth
 $ go mod download
 ```
 
+### Running
+
+```shell
+$ go vet ./...
+$ go test ./...
+```
