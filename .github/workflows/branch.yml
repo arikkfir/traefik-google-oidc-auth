@@ -81,6 +81,7 @@ jobs:
           tags: |
             type=sha,prefix=${{ needs.version.outputs.branchSlug }}-,suffix=
             type=ref,event=branch
+            type=raw,value=${{ needs.version.outputs.nextWithBuild | replace "+" "_" }}
       - uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ needs.version.outputs.nextWithBuild }}
