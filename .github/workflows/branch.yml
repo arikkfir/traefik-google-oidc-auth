@@ -99,18 +99,18 @@ jobs:
     env:
       VERSION: ${{ needs.version.outputs.nextWithBuild }}
     steps:
+      - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
         with:
           version: 3.10.1
-      - uses: actions/checkout@v3
+      - run: helm package ./chart --app-version=${VERSION} --version=${VERSION}
       - uses: actions/checkout@v3
         with:
           repository: arikkfir/arikkfir.github.io
           ref: master
           token: ${{ secrets.HELM_GITHUB_TOKEN }}
-      - run: pwd
-      - run: ls -la
-      - run: helm package ./chart --app-version=${VERSION} --version=${VERSION} --destination=./arikkfir.github.io/charts/
+      - run: pwd && ls -la
+      - run: mv -v ../*.tgz ./charts
       - name: push chart
         run: |
           helm repo index . --merge index.yaml --url https://arikkfir.github.io/charts
