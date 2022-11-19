@@ -95,12 +95,15 @@ jobs:
     needs: [version, docker]
     runs-on: ubuntu-latest
     env:
+      BRANCH: ${{ needs.version.outputs.branchSlug }}
       VERSION: ${{ needs.version.outputs.nextWithBuild }}
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
         with:
           version: 3.10.1
-      - run: helm package ./chart --app-version=${VERSION} --destination=. --version=${VERSION}
       - run: echo -n "${{ secrets.GITHUB_TOKEN }}" | helm registry login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+      - run: helm package ./chart --app-version=${VERSION} --destination=. --version=${VERSION}
       - run: helm push traefik-google-oidc-auth-${VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}
+      - run: helm package ./chart --app-version=${VERSION} --destination=. --version=${BRANCH}
+      - run: helm push traefik-google-oidc-auth-${BRANCH}.tgz oci://ghcr.io/${{ github.repository_owner }}
