@@ -99,10 +99,22 @@ jobs:
     env:
       VERSION: ${{ needs.version.outputs.nextWithBuild }}
     steps:
-      - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
         with:
           version: 3.10.1
-      - run: echo -n "${{ secrets.GITHUB_TOKEN }}" | helm registry login --username ${{ github.repository_owner }} --password-stdin ghcr.io
-      - run: helm package ./chart --app-version=${VERSION} --destination=. --version=${VERSION}
-      - run: helm push traefik-google-oidc-auth-${VERSION}.tgz oci://ghcr.io/${{ github.repository_owner }}
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: arikkfir.github.io
+          ref: master
+          token: ${{ secrets.HELM_GITHUB_TOKEN }}
+      - run: helm package ./chart --app-version=${VERSION} --version=${VERSION} --destination=./arikkfir.github.io/charts/
+      - name: push chart
+        run: |
+          helm repo index . --merge index.yaml --url https://arikkfir.github.io/charts
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add .
+          git commit -m "Update charts repository"
+          git push
+        working-directory: arikkfir.github.io/charts
