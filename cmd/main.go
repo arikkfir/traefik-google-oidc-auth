@@ -18,6 +18,8 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	//origURI := r.Header.Get("X-Forwarded-Uri")
 	//origSourceIP := r.Header.Get("X-Forwarded-For")
 
+	log.Printf("Request: %+v\n", r.Header)
+
 	if auth, err := r.Cookie(CookieName); err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			log.Printf("Cookie '%s' not found (user not authenticated) - redirecting to Google OAuth2 page", CookieName)
