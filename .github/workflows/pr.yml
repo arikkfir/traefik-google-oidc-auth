@@ -18,7 +18,8 @@ jobs:
     name: Version
     runs-on: ubuntu-latest
     outputs:
-      nextWithBuild: ${{ steps.semver.outputs.nextStrict }}-pr${{github.event.number}}+${{ steps.shortsha.outputs.sha }}
+      nextWithoutBuild: ${{ steps.semver.outputs.nextStrict }}-pr${{github.event.number}}-${{ github.run_number }}
+      nextWithBuild: ${{ steps.semver.outputs.nextStrict }}-pr${{github.event.number}}-${{ github.run_number }}+${{ steps.shortsha.outputs.sha }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -83,6 +84,7 @@ jobs:
           tags: |
             type=sha,prefix=pr${{github.event.number}}-,suffix=
             type=ref,event=pr
+            type=raw,value=${{ needs.version.outputs.nextWithoutBuild }}
       - uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ needs.version.outputs.nextWithBuild }}
@@ -97,7 +99,7 @@ jobs:
     needs: version
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ needs.version.outputs.nextWithBuild }}
+      VERSION: ${{ needs.version.outputs.nextWithoutBuild }}
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3

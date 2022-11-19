@@ -16,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       branchSlug: ${{ env.CI_GITHUB_REF_NAME_SLUG }}
-      nextWithBuild: ${{ steps.semver.outputs.nextStrict }}-branch-${{ env.CI_GITHUB_REF_NAME_SLUG }}+${{ steps.shortsha.outputs.sha }}
-      nextWithUnderscoredBuild: ${{ steps.semver.outputs.nextStrict }}-branch-${{ env.CI_GITHUB_REF_NAME_SLUG }}_${{ steps.shortsha.outputs.sha }}
+      nextWithoutBuild: ${{ steps.semver.outputs.nextStrict }}-${{ env.CI_GITHUB_REF_NAME_SLUG }}-${{ github.run_number }}
+      nextWithBuild: ${{ steps.semver.outputs.nextStrict }}-${{ env.CI_GITHUB_REF_NAME_SLUG }}-${{ github.run_number }}+${{ steps.shortsha.outputs.sha }}
+      nextWithUnderscoredBuild: ${{ steps.semver.outputs.nextStrict }}-${{ env.CI_GITHUB_REF_NAME_SLUG }}-${{ github.run_number }}_${{ steps.shortsha.outputs.sha }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -82,7 +83,7 @@ jobs:
           tags: |
             type=sha,prefix=${{ needs.version.outputs.branchSlug }}-,suffix=
             type=ref,event=branch
-            type=raw,value=${{ needs.version.outputs.nextWithUnderscoredBuild }}
+            type=raw,value=${{ needs.version.outputs.nextWithoutBuild }}
       - uses: docker/build-push-action@v3
         with:
           build-args: VERSION=${{ needs.version.outputs.nextWithBuild }}
@@ -97,7 +98,7 @@ jobs:
     needs: version
     runs-on: ubuntu-latest
     env:
-      VERSION: ${{ needs.version.outputs.nextWithBuild }}
+      VERSION: ${{ needs.version.outputs.nextWithoutBuild }}
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
