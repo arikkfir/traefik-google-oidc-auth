@@ -15,7 +15,7 @@ import (
 )
 
 func envOrDefault(envKey, defaultValue string) string {
-	if value, ok := os.LookupEnv(envKey); ok {
+	if value := os.Getenv(envKey); value != "" {
 		return value
 	}
 	return defaultValue
