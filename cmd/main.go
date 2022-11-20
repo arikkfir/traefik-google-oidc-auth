@@ -135,11 +135,11 @@ func handleCallback(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.StringVar(&clientID, "client-id", cookieName, "OAuth application client ID")
-	flag.StringVar(&clientSecret, "client-secret", cookieName, "OAuth application client secret")
+	flag.StringVar(&clientID, "client-id", clientID, "OAuth application client ID")
+	flag.StringVar(&clientSecret, "client-secret", clientSecret, "OAuth application client secret")
 	flag.StringVar(&cookieName, "cookie", cookieName, "Cookie name to read & store authentication data")
 	flag.StringVar(&scopes, "scopes", scopes, "Space-separated OAuth scopes to request from the user")
-	flag.StringVar(&callbackHost, "callback-host", cookieName, "External host name assigned to use for OAuth validation (needs to lead back to this service)")
+	flag.StringVar(&callbackHost, "callback-host", callbackHost, "External host name assigned to use for OAuth validation (needs to lead back to this service)")
 	flag.Parse()
 	if clientID == "" {
 		fmt.Fprintf(os.Stderr, "OAuth app client ID must be specified\n")
