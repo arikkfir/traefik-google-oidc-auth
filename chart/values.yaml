@@ -1,0 +1,10 @@
+oauth:
+  clientId: ""
+  clientSecret:
+    secretName: ""
+    key: ""
+  scopes: ""
+  callbackHost: ""
+cookieName: ""
+security:
+  csrfCookieName: ""
