@@ -25,7 +25,10 @@ spec:
           name: server
           env:
             - name: "CLIENT_ID"
-              value: "{{.Values.oauth.clientId}}"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{.Values.oauth.clientId.secretName}}"
+                  key: "{{.Values.oauth.clientId.key}}"
             - name: "CLIENT_SECRET"
               valueFrom:
                 secretKeyRef:

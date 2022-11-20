@@ -1,5 +1,7 @@
 oauth:
-  clientId: ""
+  clientId:
+    secretName: ""
+    key: ""
   clientSecret:
     secretName: ""
     key: ""
