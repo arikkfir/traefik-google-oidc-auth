@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -69,6 +70,11 @@ func (s *Server) getUserEmail(token string) (string, error) {
 }
 
 func (s *Server) handleCallbackRequest(w http.ResponseWriter, r *http.Request) {
+	log.Printf(""+
+		"==========================================\n"+
+		"Request: %+v\n"+
+		"==========================================", r)
+
 	state := map[string]string{}
 	if err := json.Unmarshal([]byte(r.URL.Query().Get("state")), &state); err != nil {
 		s.httpError(w, http.StatusBadRequest, fmt.Errorf("failed to unmarshal state JSON: %w", err))
