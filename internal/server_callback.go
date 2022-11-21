@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -70,10 +69,7 @@ func (s *Server) getUserEmail(token string) (string, error) {
 }
 
 func (s *Server) handleCallbackRequest(w http.ResponseWriter, r *http.Request) {
-	log.Printf(""+
-		"==========================================\n"+
-		"Request: %+v\n"+
-		"==========================================", r)
+	log.Printf("Request: %+v\n", r)
 
 	state := map[string]string{}
 	if err := json.Unmarshal([]byte(r.URL.Query().Get("state")), &state); err != nil {
@@ -111,7 +107,7 @@ func (s *Server) handleCallbackRequest(w http.ResponseWriter, r *http.Request) {
 		Name:     s.cfg.UserCookieName,
 		Value:    fmt.Sprintf("%s|%d|%s", mac, expires.Unix(), email),
 		Path:     "/",
-		Domain:   strings.Split(redirectURL.Host, ":")[0],
+		Domain:   s.cfg.UserCookieDomain,
 		HttpOnly: true,
 		Secure:   true,
 		Expires:  expires,

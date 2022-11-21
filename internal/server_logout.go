@@ -6,9 +6,6 @@ import (
 )
 
 func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
-	log.Printf(""+
-		"==========================================\n"+
-		"Request: %+v\n"+
-		"==========================================", r)
+	log.Printf("Request: %+v\n", r)
 	// TODO: implement HandleLogout
 }

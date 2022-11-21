@@ -8,7 +8,9 @@ oauth:
   scopes: ""
   host: ""
 security:
-  userCookie: ""
+  userCookie:
+    name: ""
+    domain: ""
   secret:
     secretName: ""
     key: ""

@@ -40,8 +40,10 @@ spec:
             - name: "SCOPES"
               value: "{{.Values.oauth.scopes}}"
             {{- end }}
-            - name: "USER_COOKIE"
-              value: "{{.Values.security.userCookie}}"
+            - name: "USER_COOKIE_NAME"
+              value: "{{.Values.security.userCookie.name}}"
+            - name: "USER_COOKIE_DOMAIN"
+              value: "{{.Values.security.userCookie.domain}}"
             - name: "SECRET"
               valueFrom:
                 secretKeyRef:

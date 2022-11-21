@@ -78,10 +78,7 @@ func (s *Server) validateCookie(w http.ResponseWriter, c *http.Cookie) {
 }
 
 func (s *Server) handleVerifyRequest(w http.ResponseWriter, r *http.Request) {
-	log.Printf(""+
-		"==========================================\n"+
-		"Request: %+v\n"+
-		"==========================================", r)
+	log.Printf("Request: %+v\n", r)
 	if c, err := r.Cookie(s.cfg.UserCookieName); err != nil {
 		if errors.Is(err, http.ErrNoCookie) {
 			s.redirectToGoogleAuth(w, r)
