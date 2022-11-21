@@ -279,7 +279,7 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		Name:     cookieName,
 		Value:    fmt.Sprintf("%s|%d|%s", mac, expires.Unix(), user),
 		Path:     "/",
-		Domain:   oauthHost,
+		Domain:   redirectURL.Host,
 		HttpOnly: true,
 		Secure:   true,
 		Expires:  expires,
