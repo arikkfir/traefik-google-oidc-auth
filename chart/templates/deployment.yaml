@@ -40,8 +40,15 @@ spec:
               value: "{{.Values.security.csrfCookieName}}"
             - name: "SCOPES"
               value: "{{.Values.oauth.scopes}}"
-            - name: "CALLBACK_HOST"
-              value: "{{.Values.oauth.callbackHost}}"
+            - name: "OAUTH_HOST"
+              value: "{{.Values.oauth.host}}"
+            - name: "SIGNING_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{.Values.security.signingSecret.secretName}}"
+                  key: "{{.Values.security.signingSecret.key}}"
+            - name: "ALLOWED_USER_DOMAINS"
+              value: "{{.Values.security.allowedUserDomains | join ","}}"
           ports:
             - containerPort: 8000
               name: http

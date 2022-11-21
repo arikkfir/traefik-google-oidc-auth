@@ -6,7 +6,11 @@ oauth:
     secretName: ""
     key: ""
   scopes: ""
-  callbackHost: ""
+  host: ""
 cookieName: ""
 security:
   csrfCookieName: ""
+  signingSecret:
+    secretName: ""
+    key: ""
+  allowedUserDomains: []

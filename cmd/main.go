@@ -384,9 +384,14 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	} else if len(allowedUserDomains) == 0 {
-		fmt.Fprintf(os.Stderr, "Allowed user domains is required\n")
-		flag.Usage()
-		os.Exit(1)
+		allowedUserDomainsEnv := os.Getenv("ALLOWED_USER_DOMAINS")
+		if allowedUserDomainsEnv != "" {
+			allowedUserDomains = strings.Split(allowedUserDomainsEnv, ",")
+		} else {
+			fmt.Fprintf(os.Stderr, "Allowed user domains is required\n")
+			flag.Usage()
+			os.Exit(1)
+		}
 	}
 
 	http.HandleFunc("/verify", handleVerify)
