@@ -100,6 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ needs.version.outputs.nextWithoutBuild }}
+    concurrency: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
