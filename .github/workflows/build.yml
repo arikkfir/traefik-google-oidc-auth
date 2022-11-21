@@ -1,7 +1,8 @@
-name: Build pull requests
-run-name: 'Build PR #${{github.event.number}}'
+name: Build
 
 on:
+  push:
+    branches: [ '*' ]
   pull_request:
     types:
       - opened
@@ -14,33 +15,8 @@ defaults:
 
 jobs:
 
-  version:
-    name: Version
-    runs-on: ubuntu-latest
-    outputs:
-      nextWithoutBuild: ${{ steps.semver.outputs.nextStrict }}-pr${{github.event.number}}-${{ github.run_number }}
-      nextWithBuild: ${{ steps.semver.outputs.nextStrict }}-pr${{github.event.number}}-${{ github.run_number }}+${{ steps.shortsha.outputs.sha }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: rlespinasse/github-slug-action@v4
-        with:
-          prefix: CI_
-      - uses: benjlevesque/short-sha@v2.1
-        id: shortsha
-      - uses: ietf-tools/semver-action@v1
-        id: semver
-        with:
-          token: ${{ github.token }}
-          branch: ${{ github.head_ref }}
-          majorList: BREAKING, breaking, MAJOR, major
-          minorList: FEAT, feat, FEATURE, feature
-          patchList: DEVOPS, devops, FIX, fix, BUGFIX, bugfix, PERF, perf, REFACTOR, refactor, TEST, test, TESTS, tests
-
   test:
     name: Test
-    needs: version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -50,22 +26,12 @@ jobs:
           check-latest: true
           go-version-file: go.mod
       - run: go vet ./...
-      - run: |
-          go test -ldflags "-X 'github.com/${{ github.repository }}/internal.versionString=${VERSION}'" \
-                  -v \
-                  -vet=off \
-                  -race \
-                  -coverprofile=coverage.txt \
-                  -covermode=atomic \
-                  ./...
-        env:
-          VERSION: ${{ needs.version.outputs.nextWithBuild }}
+      - run: go test -v -vet=off -race -coverprofile=coverage.txt -covermode=atomic ./...
       - uses: codecov/codecov-action@v3
         if: always()
 
   docker:
     name: Docker
-    needs: version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -82,12 +48,11 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=sha,prefix=pr${{github.event.number}}-,suffix=
+            type=sha,format=short
+            type=ref,event=branch
             type=ref,event=pr
-            type=raw,value=${{ needs.version.outputs.nextWithoutBuild }}
       - uses: docker/build-push-action@v3
         with:
-          build-args: VERSION=${{ needs.version.outputs.nextWithBuild }}
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -96,24 +61,24 @@ jobs:
 
   helm:
     name: Helm
-    needs: version
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.version.outputs.nextWithoutBuild }}
-    concurrency: ${{ github.ref_name }}
+    concurrency: push-helm-repository
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
         with:
           version: 3.10.1
-      - run: helm package ./chart --app-version=${VERSION} --version=${VERSION}
+      - uses: benjlevesque/short-sha@v2.1
+        id: shortsha
       - uses: actions/checkout@v3
         with:
           repository: arikkfir/arikkfir.github.io
           ref: master
           token: ${{ secrets.HELM_GITHUB_TOKEN }}
           path: arikkfir.github.io
-      - run: mv -v traefik-google-oidc-auth-${VERSION}.tgz ./arikkfir.github.io/charts
+      - run: helm package ./chart --app-version=${{ steps.shortsha.outputs.sha }} --version=${VERSION} --destination=./arikkfir.github.io/charts
+        env:
+          VERSION: 0.0.0-dev${{ github.run_number }}+${{ steps.shortsha.outputs.sha }}
       - name: push chart
         run: |
           helm repo index . --merge index.yaml --url https://arikkfir.github.io/charts

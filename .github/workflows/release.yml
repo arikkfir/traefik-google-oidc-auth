@@ -4,8 +4,7 @@ run-name: Release ${{ github.ref_name }}
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-[a-z][a-z0-9]*'
+      - v*
 
 defaults:
   run:
@@ -13,44 +12,8 @@ defaults:
 
 jobs:
 
-  version:
-    name: Version
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ github.ref_name }}
-      versionWithBuild: ${{ github.ref_name }}+${{ steps.shortsha.outputs.sha }}
-    steps:
-      - uses: benjlevesque/short-sha@v2.1
-        id: shortsha
-
-  test:
-    name: Test
-    needs: version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          cache: true
-          check-latest: true
-          go-version-file: go.mod
-      - run: go vet ./...
-      - run: |
-          go test -ldflags "-X 'github.com/${{ github.repository }}/internal.versionString=${VERSION}'" \
-                  -v \
-                  -vet=off \
-                  -race \
-                  -coverprofile=coverage.txt \
-                  -covermode=atomic \
-                  ./...
-        env:
-          VERSION: ${{ needs.version.outputs.versionWithBuild }}
-      - uses: codecov/codecov-action@v3
-        if: always()
-
   docker:
     name: Docker
-    needs: version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -67,11 +30,12 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=raw,value=${{ needs.version.outputs.version }}
-            type=raw,value=${{ needs.version.outputs.versionWithBuild }}
+            type=semver,pattern={{raw}}
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}
       - uses: docker/build-push-action@v3
         with:
-          build-args: VERSION=${{ needs.version.outputs.versionWithBuild }}
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -80,23 +44,21 @@ jobs:
 
   helm:
     name: Helm
-    needs: version
+    needs: docker
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.version.outputs.version }}
+    concurrency: push-helm-repository
     steps:
       - uses: actions/checkout@v3
       - uses: azure/setup-helm@v3
         with:
           version: 3.10.1
-      - run: helm package ./chart --app-version=${VERSION} --version=${VERSION}
       - uses: actions/checkout@v3
         with:
           repository: arikkfir/arikkfir.github.io
           ref: master
           token: ${{ secrets.HELM_GITHUB_TOKEN }}
           path: arikkfir.github.io
-      - run: mv -v traefik-google-oidc-auth-${VERSION}.tgz ./arikkfir.github.io/charts
+      - run: helm package ./chart --app-version=${{ github.ref_name }} --version=${{ github.ref_name }} --destination=./arikkfir.github.io/charts
       - name: push chart
         run: |
           helm repo index . --merge index.yaml --url https://arikkfir.github.io/charts
