@@ -22,8 +22,8 @@ import (
 var (
 	clientID           = os.Getenv("CLIENT_ID")
 	clientSecret       = os.Getenv("CLIENT_SECRET")
-	cookieName         = envOrDefault("COOKIE_NAME", "X-Kfirs-Auth")
-	csrfCookieName     = envOrDefault("CSRF_COOKIE_NAME", "X-Kfirs-Protect")
+	cookieName         = os.Getenv("COOKIE_NAME")
+	csrfCookieName     = os.Getenv("CSRF_COOKIE_NAME")
 	scopes             = envOrDefault("SCOPES", "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email")
 	oauthHost          = os.Getenv("OAUTH_HOST")
 	tokenURL           = &url.URL{Scheme: "https", Host: "www.googleapis.com", Path: "/oauth2/v3/token"}
