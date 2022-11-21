@@ -30,8 +30,10 @@ func (c *Config) isAllowedDomain(domain string) bool {
 		parts := strings.Split(domain, ":")
 		domain = parts[0]
 	}
+	domain = strings.ToLower(domain)
 	for _, allowedDomain := range c.Domains {
-		if strings.ToLower(domain) == strings.ToLower(allowedDomain) {
+		lcAllowedDomain := strings.ToLower(allowedDomain)
+		if domain == lcAllowedDomain || strings.HasSuffix(domain, "."+lcAllowedDomain) {
 			return true
 		}
 	}
