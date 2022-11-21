@@ -279,7 +279,7 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		Name:     cookieName,
 		Value:    fmt.Sprintf("%s|%d|%s", mac, expires.Unix(), user),
 		Path:     "/",
-		Domain:   redirectURL.Host,
+		Domain:   strings.Split(oauthHost, ":")[0],
 		HttpOnly: true,
 		Secure:   true,
 		Expires:  expires,
@@ -294,7 +294,7 @@ func main() {
 	flag.StringVar(&clientSecret, "client-secret", clientSecret, "OAuth application client secret")
 	flag.StringVar(&cookieName, "cookie", cookieName, "Cookie name to read & store authentication data")
 	flag.StringVar(&scopes, "scopes", scopes, "Space-separated OAuth scopes to request from the user")
-	flag.StringVar(&oauthHost, "callback-host", oauthHost, "External host name assigned to use for OAuth validation (needs to lead back to this service)")
+	flag.StringVar(&oauthHost, "oauth-host", oauthHost, "External host name assigned to use for OAuth validation (needs to lead back to this service)")
 	flag.StringVar(&signingSecret, "signing-secret", signingSecret, "Secret used for signing user cookie")
 	flag.Func("allowed-user-domains", "Comma-separated list of allowed user domains", func(s string) error {
 		if s == "" {
