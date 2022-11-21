@@ -39,7 +39,7 @@ spec:
             {{- if .Values.oauth.scopes }}
             - name: "SCOPES"
               value: "{{.Values.oauth.scopes}}"
-            {{ end -}}
+            {{- end }}
             - name: "USER_COOKIE"
               value: "{{.Values.security.userCookie}}"
             - name: "SECRET"
