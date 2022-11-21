@@ -76,6 +76,8 @@ func handleVerify(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
+			// TODO: add CSRF cookie
+
 			q := url.Values{}
 			q.Set("client_id", clientID)
 			q.Set("response_type", "code")
