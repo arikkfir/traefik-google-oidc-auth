@@ -251,12 +251,12 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed requesting user: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
-	} else if err := resp.Body.Close(); err != nil {
-		log.Printf("Failed closing HTTP user response body: %v", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
 	} else if j, err := gabs.ParseJSONBuffer(resp.Body); err != nil {
 		log.Printf("Failed parsing user JSON: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	} else if err := resp.Body.Close(); err != nil {
+		log.Printf("Failed closing HTTP user response body: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	} else if !j.ExistsP("email") {
