@@ -12,6 +12,7 @@ func main() {
 	if err := internal.NewConfig(&config); err != nil {
 		log.Fatalf("Failed to configure: %v", err)
 	}
+	log.Printf("Config: %+v", config)
 
 	server := internal.NewServer(&config)
 	if err := server.Run(); err != nil {

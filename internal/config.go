@@ -26,8 +26,10 @@ func (c *Config) getCallbackURL() string {
 }
 
 func (c *Config) isAllowedDomain(domain string) bool {
-	parts := strings.Split(domain, ":")
-	domain = parts[0]
+	if strings.Contains(domain, ":") {
+		parts := strings.Split(domain, ":")
+		domain = parts[0]
+	}
 	for _, allowedDomain := range c.Domains {
 		if strings.ToLower(domain) == strings.ToLower(allowedDomain) {
 			return true
