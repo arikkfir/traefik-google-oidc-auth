@@ -46,7 +46,7 @@ provide their Email address once authenticate.
 3. Save the client ID and client secret from the OAuth client ID you just created.
    * For this tutorial, let's assume you saved the client ID and client secret in the `client_id.txt` & `client_secret.txt` files respectively.
 
-### Deploying the plugin
+### Deploy the plugin
 
 Now we will install the plugin in the cluster. We will assume that you've already have Traefik set up and running in
 your cluster, with the Kubernetes CRD provider enabled.
@@ -82,7 +82,7 @@ security:
     - example.com
 ```
 
-Now install the Help chart:
+#### Install the Helm chart
 
 ```bash
 $ helm repo add arikkfir https://arikkfir.github.io/charts
@@ -91,9 +91,7 @@ $ help install arikkfir/traefik-google-oidc-auth --values values.yaml
 
 ### Configuration
 
-#### Create a Middleware
-
-Create the following resource:
+#### Plugin resources
 
 ```yaml
 apiVersion: traefik.containo.us/v1alpha1
@@ -124,7 +122,7 @@ spec:
     secretName: oauth-example-com-tls # TLS is required, make sure you set it up (use Let's Encrypt!)
 ```
 
-Then configure your application's `IngressRoute` object like so:
+#### Application resources
 
 ```yaml
 apiVersion: traefik.containo.us/v1alpha1
