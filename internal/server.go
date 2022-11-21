@@ -53,7 +53,7 @@ func (s *Server) generateState(r *http.Request) (string, error) {
 }
 
 func (s *Server) generateMAC(email string, expires int64) string {
-	hash := hmac.New(sha256.New, []byte(s.cfg.Secret))
+	hash := hmac.New(sha256.New, []byte(s.cfg.HashingSecret))
 	hash.Write([]byte(s.cfg.AuthServiceHost))
 	hash.Write([]byte(email))
 	hash.Write([]byte(fmt.Sprintf("%d", expires)))

@@ -2,14 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: "{{.Release.Name}}"
+    app: "{{ .Release.Name }}"
     app.kubernetes.io/component: server
-  name: "{{.Release.Name}}-server"
-  namespace: {{.Release.Namespace}}
+  name: "{{ .Release.Name }}-server"
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: "{{.Release.Name}}"
+      app: "{{ .Release.Name }}"
       app.kubernetes.io/component: server
   replicas: 1
   strategy:
@@ -17,40 +17,40 @@ spec:
   template:
     metadata:
       labels:
-        app: "{{.Release.Name}}"
+        app: "{{ .Release.Name }}"
         app.kubernetes.io/component: server
     spec:
       containers:
-        - image: "ghcr.io/arikkfir/traefik-google-oidc-auth:{{.Chart.AppVersion | replace "+" "_"}}"
+        - image: "ghcr.io/arikkfir/traefik-google-oidc-auth:{{ .Chart.AppVersion | replace "+" "_" }}"
           name: server
           env:
             - name: "CLIENT_ID"
               valueFrom:
                 secretKeyRef:
-                  name: "{{.Values.oauth.clientId.secretName}}"
-                  key: "{{.Values.oauth.clientId.key}}"
+                  name: "{{ .Values.oauth.clientId.secretName }}"
+                  key: "{{ .Values.oauth.clientId.key }}"
             - name: "CLIENT_SECRET"
               valueFrom:
                 secretKeyRef:
-                  name: "{{.Values.oauth.clientSecret.secretName}}"
-                  key: "{{.Values.oauth.clientSecret.key}}"
+                  name: "{{ .Values.oauth.clientSecret.secretName }}"
+                  key: "{{ .Values.oauth.clientSecret.key }}"
             - name: "AUTH_SERVICE_HOST"
-              value: "{{.Values.oauth.host}}"
+              value: "{{ .Values.oauth.host }}"
             {{- if .Values.oauth.scopes }}
             - name: "SCOPES"
-              value: "{{.Values.oauth.scopes}}"
+              value: "{{ .Values.oauth.scopes }}"
             {{- end }}
             - name: "USER_COOKIE_NAME"
-              value: "{{.Values.security.userCookie.name}}"
+              value: "{{ .Values.security.userCookie.name }}"
             - name: "USER_COOKIE_DOMAIN"
-              value: "{{.Values.security.userCookie.domain}}"
-            - name: "SECRET"
+              value: "{{ .Values.security.userCookie.domain }}"
+            - name: "HASHING_SECRET"
               valueFrom:
                 secretKeyRef:
-                  name: "{{.Values.security.secret.secretName}}"
-                  key: "{{.Values.security.secret.key}}"
+                  name: "{{ .Values.security.hashingSecret.secretName }}"
+                  key: "{{ .Values.security.hashingSecret.key }}"
             - name: "DOMAINS"
-              value: "{{.Values.security.allowedDomains | join ","}}"
+              value: "{{ .Values.security.allowedDomains | join "," }}"
           ports:
             - containerPort: 8000
               name: http
@@ -61,4 +61,4 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
-      serviceAccountName: "{{.Release.Name}}-server"
+      serviceAccountName: "{{ .Release.Name }}-server"
