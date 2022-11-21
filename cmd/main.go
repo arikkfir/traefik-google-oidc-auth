@@ -76,29 +76,6 @@ func handleVerify(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			for _, v := range r.Cookies() {
-				if strings.Contains(v.Name, csrfCookieName) {
-					http.SetCookie(w, &http.Cookie{
-						Name:     v.Name,
-						Value:    "",
-						Path:     "/",
-						Domain:   oauthHost,
-						HttpOnly: true,
-						Secure:   true,
-						Expires:  time.Now().Add(time.Hour * -1),
-					})
-				}
-			}
-			http.SetCookie(w, &http.Cookie{
-				Name:     csrfCookieName + "_" + nonce[:6],
-				Value:    nonce,
-				Path:     "/",
-				Domain:   oauthHost,
-				HttpOnly: true,
-				Secure:   true,
-				Expires:  time.Now().Add(time.Hour * 1),
-			})
-
 			q := url.Values{}
 			q.Set("client_id", clientID)
 			q.Set("response_type", "code")
@@ -217,39 +194,6 @@ func handleAuthCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
-
-	// Check for CSRF cookie
-	csrfCookie, err := r.Cookie(csrfCookieName + "_" + state["nonce"][:6])
-	if err != nil {
-		log.Printf("Missing CSRF cookie: %v", r)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	// Validate CSRF cookie against state
-	if len(csrfCookie.Value) != 32 {
-		log.Printf("Invalid CSRF cookie: %v", csrfCookie)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	// Check nonce match
-	if csrfCookie.Value != state["nonce"] {
-		log.Printf("CSRF cookie does not match state: %v, %v", r, state)
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-
-	// Clear CSRF cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     csrfCookie.Name,
-		Value:    "",
-		Path:     "/",
-		Domain:   oauthHost,
-		HttpOnly: true,
-		Secure:   true,
-		Expires:  time.Now().Add(time.Hour * -1),
-	})
 
 	// Validate redirect
 	redirectURL, err := url.Parse(state["target"])
