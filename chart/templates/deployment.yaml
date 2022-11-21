@@ -34,21 +34,19 @@ spec:
                 secretKeyRef:
                   name: "{{.Values.oauth.clientSecret.secretName}}"
                   key: "{{.Values.oauth.clientSecret.key}}"
-            - name: "COOKIE_NAME"
-              value: "{{.Values.cookieName}}"
-            - name: "CSRF_COOKIE_NAME"
-              value: "{{.Values.security.csrfCookieName}}"
+            - name: "AUTH_SERVICE_HOST"
+              value: "{{.Values.oauth.host}}"
             - name: "SCOPES"
               value: "{{.Values.oauth.scopes}}"
-            - name: "OAUTH_HOST"
-              value: "{{.Values.oauth.host}}"
-            - name: "SIGNING_SECRET"
+            - name: "USER_COOKIE"
+              value: "{{.Values.security.userCookie}}"
+            - name: "SECRET"
               valueFrom:
                 secretKeyRef:
-                  name: "{{.Values.security.signingSecret.secretName}}"
-                  key: "{{.Values.security.signingSecret.key}}"
-            - name: "ALLOWED_USER_DOMAINS"
-              value: "{{.Values.security.allowedUserDomains | join ","}}"
+                  name: "{{.Values.security.secret.secretName}}"
+                  key: "{{.Values.security.secret.key}}"
+            - name: "DOMAINS"
+              value: "{{.Values.security.allowedDomains | join ","}}"
           ports:
             - containerPort: 8000
               name: http

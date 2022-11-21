@@ -9,8 +9,8 @@ oauth:
   host: ""
 cookieName: ""
 security:
-  csrfCookieName: ""
-  signingSecret:
+  userCookie: ""
+  secret:
     secretName: ""
     key: ""
-  allowedUserDomains: []
+  allowedDomains: []
