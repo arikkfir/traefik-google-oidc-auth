@@ -1,0 +1,17 @@
+#oauth:
+#  clientId:
+#    secretName: ""
+#    key: ""
+#  clientSecret:
+#    secretName: ""
+#    key: ""
+#  scopes: ""
+#  host: ""
+#security:
+#  userCookie:
+#    name: ""
+#    domain: ""
+#  hashingSecret:
+#    secretName: ""
+#    key: ""
+#  allowedDomains: []

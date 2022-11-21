@@ -1,0 +1,17 @@
+oauth:
+  clientId:
+    secretName: k8s-secret-holding-your-oauth-app-details
+    key: key-in-the-k8s-secret-containing-the-oauth-app-clientId
+  clientSecret:
+    secretName: k8s-secret-holding-your-oauth-app-details
+    key: key-in-the-k8s-secret-containing-the-oauth-app-clientSecret
+  scopes: "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email" # this is the default
+  host: oauth.example.com
+security:
+  userCookie:
+    name: X-Example-Auth
+    domain: example.com
+  hashingSecret:
+    secretName: k8s-secret-holding-your-SUPER-SECRET-key-for-hashing
+    key: key-in-the-k8s-secret-containing-the-ACTUAL-HASHING-SECRET
+  allowedDomains: [example.com]
