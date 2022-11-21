@@ -13,7 +13,7 @@ import (
 
 func (s *Server) redirectToGoogleAuth(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("X-Forwarded-Method") != "GET" {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		s.httpError(w, http.StatusUnauthorized, fmt.Errorf("only GET requests are allowed"))
 		return
 	}
 
