@@ -36,8 +36,10 @@ spec:
                   key: "{{.Values.oauth.clientSecret.key}}"
             - name: "AUTH_SERVICE_HOST"
               value: "{{.Values.oauth.host}}"
+            {{- if .Values.oauth.scopes }}
             - name: "SCOPES"
               value: "{{.Values.oauth.scopes}}"
+            {{ end -}}
             - name: "USER_COOKIE"
               value: "{{.Values.security.userCookie}}"
             - name: "SECRET"
