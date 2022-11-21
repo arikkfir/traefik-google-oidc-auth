@@ -7,7 +7,6 @@ oauth:
     key: ""
   scopes: ""
   host: ""
-cookieName: ""
 security:
   userCookie: ""
   secret:
