@@ -62,3 +62,11 @@ spec:
               cpu: 100m
               memory: 128Mi
       serviceAccountName: "{{ .Release.Name }}-server"
+      {{- with .Values.deployment.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deployment.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}

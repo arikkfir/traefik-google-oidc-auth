@@ -15,3 +15,11 @@ security:
     secretName: k8s-secret-holding-your-SUPER-SECRET-key-for-hashing
     key: key-in-the-k8s-secret-containing-the-ACTUAL-HASHING-SECRET
   allowedDomains: [example.com]
+deployment:
+  nodeSelector:
+    a: b
+  tolerations:
+    - key: TaintKey
+      operator: Equal
+      value: TaintValue
+      effect: NoSchedule
