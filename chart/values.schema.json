@@ -3,6 +3,39 @@
   "type": "object",
   "required": ["oauth", "security"],
   "properties": {
+    "deployment": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "nodeSelector": {
+          "type": "object",
+          "additionalProperties" : {
+            "type" : "string"
+          }
+        },
+        "tolerations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "operator": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "effect": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
     "oauth": {
       "type": "object",
       "required": ["clientId", "clientSecret", "host"],
