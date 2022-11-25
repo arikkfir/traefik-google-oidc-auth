@@ -3,6 +3,17 @@
   "type": "object",
   "required": ["oauth", "security"],
   "properties": {
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "deployment": {
       "type": "object",
       "required": [],
