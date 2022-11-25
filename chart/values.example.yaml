@@ -23,3 +23,6 @@ deployment:
       operator: Equal
       value: TaintValue
       effect: NoSchedule
+serviceAccount:
+  annotations:
+    a: b
